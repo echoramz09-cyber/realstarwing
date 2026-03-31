@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "siteConfig": {
+      "title": "Site Configuration",
+      "description": "Global configuration for all editable site elements.",
+      "type": "object",
+      "properties": {
+        "hero": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "subtitle": { "type": "string" },
+            "logoScale": { "type": "number" },
+            "logoVisible": { "type": "boolean" }
+          }
+        },
+        "about": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "content": { "type": "string" },
+            "visible": { "type": "boolean" }
+          }
+        },
+        "roster": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "visible": { "type": "boolean" },
+            "players": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "number" },
+                  "name": { "type": "string" },
+                  "role": { "type": "string" },
+                  "photoUrl": { "type": "string" },
+                  "visible": { "type": "boolean" },
+                  "scale": { "type": "number" }
+                }
+              }
+            }
+          }
+        },
+        "lineups": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "visible": { "type": "boolean" }
+          }
+        },
+        "achievements": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "visible": { "type": "boolean" },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "date": { "type": "string" },
+                  "description": { "type": "string" },
+                  "visible": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "socials": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "visible": { "type": "boolean" },
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": { "type": "string" },
+                  "url": { "type": "string" },
+                  "visible": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "footer": {
+          "type": "object",
+          "properties": {
+            "quote": { "type": "string" },
+            "visible": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "admin": {
+      "title": "Admin User",
+      "description": "Credentials for the admin panel.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/config/site": {
+      "schema": "siteConfig",
+      "description": "The main site configuration document."
+    },
+    "/admins/{adminId}": {
+      "schema": "admin",
+      "description": "Admin users for the panel."
+    }
+  }
+}
