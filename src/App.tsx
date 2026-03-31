@@ -23,21 +23,21 @@ const DiscordIcon = ({ size = 24, className = "" }: { size?: number; className?:
   </svg>
 );
 
-function RocketLoading() {
-  const stars = useMemo(() => Array.from({ length: 60 }).map((_, i) => ({
+function RocketLoading({ message, subMessage }: { message?: string, subMessage?: string }) {
+  const stars = useMemo(() => Array.from({ length: 40 }).map((_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
     size: Math.random() * 2 + 1,
-    duration: Math.random() * 2 + 1,
+    duration: Math.random() * 1.5 + 0.5,
     delay: Math.random() * 5
   })), []);
 
   const [phase, setPhase] = useState('ignition'); // ignition -> warp -> blastoff
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setPhase('warp'), 1500);
-    const timer2 = setTimeout(() => setPhase('blastoff'), 3000);
+    const timer1 = setTimeout(() => setPhase('warp'), 1200);
+    const timer2 = setTimeout(() => setPhase('blastoff'), 2800);
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -51,7 +51,7 @@ function RocketLoading() {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-[#02040a] overflow-hidden"
     >
-      {/* Starfield Background */}
+      {/* Starfield Background - Optimized */}
       <div className="absolute inset-0 pointer-events-none">
         {stars.map((star) => (
           <motion.div
@@ -59,11 +59,11 @@ function RocketLoading() {
             initial={{ y: -100, opacity: 0 }}
             animate={{ 
               y: ["0vh", "100vh"],
-              height: phase === 'warp' ? [star.size, 100, star.size] : star.size,
+              height: phase === 'warp' ? [star.size, 80, star.size] : star.size,
               opacity: [0, 1, 1, 0]
             }}
             transition={{ 
-              duration: phase === 'warp' ? star.duration * 0.2 : star.duration,
+              duration: phase === 'warp' ? star.duration * 0.3 : star.duration,
               repeat: Infinity,
               delay: star.delay,
               ease: "linear"
@@ -74,20 +74,21 @@ function RocketLoading() {
               width: star.size,
               backgroundColor: phase === 'warp' ? '#fff' : '#d4af37',
               borderRadius: '999px',
-              filter: phase === 'warp' ? 'blur(2px)' : 'blur(1px)'
+              filter: phase === 'warp' ? 'blur(1px)' : 'none',
+              willChange: 'transform'
             }}
           />
         ))}
       </div>
 
       {/* HUD Elements */}
-      <div className="absolute inset-0 border-[20px] border-gold/5 pointer-events-none">
-        <div className="absolute top-10 left-10 font-mono text-[10px] text-gold/30 space-y-1">
+      <div className="absolute inset-0 border-[10px] md:border-[20px] border-gold/5 pointer-events-none">
+        <div className="absolute top-6 left-6 md:top-10 md:left-10 font-mono text-[8px] md:text-[10px] text-gold/30 space-y-1">
           <p>SYSTEM_STATUS: OVERDRIVE</p>
           <p>WARP_DRIVE: {phase === 'warp' ? 'ACTIVE' : 'CHARGING'}</p>
           <p>COORDS: STARWING_HQ_09</p>
         </div>
-        <div className="absolute bottom-10 right-10 font-mono text-[10px] text-gold/30 text-right space-y-1">
+        <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 font-mono text-[8px] md:text-[10px] text-gold/30 text-right space-y-1">
           <p>LATENCY: 0.001ms</p>
           <p>SYNC_PROTOCOL: EMPIRE_V2</p>
           <p>DEPLOY_PHASE: {phase.toUpperCase()}</p>
@@ -96,12 +97,12 @@ function RocketLoading() {
 
       {/* Screen Shake Container */}
       <motion.div
-        animate={phase === 'blastoff' ? { y: -1000, opacity: 0 } : { 
-          x: phase === 'warp' ? [0, -4, 4, -2, 2, 0] : [0, -1, 1, 0],
-          y: phase === 'warp' ? [0, 2, -2, 4, -4, 0] : [0, 1, -1, 0]
+        animate={phase === 'blastoff' ? { y: -1200, opacity: 0 } : { 
+          x: phase === 'warp' ? [0, -3, 3, -1, 1, 0] : [0, -1, 1, 0],
+          y: phase === 'warp' ? [0, 1, -1, 2, -2, 0] : [0, 0.5, -0.5, 0]
         }}
         transition={{ 
-          duration: phase === 'warp' ? 0.05 : 0.1,
+          duration: phase === 'warp' ? 0.06 : 0.12,
           repeat: phase === 'blastoff' ? 0 : Infinity,
           ease: phase === 'blastoff' ? "easeIn" : "linear"
         }}
@@ -111,75 +112,63 @@ function RocketLoading() {
           {/* Sonic Boom / Shockwave */}
           {phase === 'warp' && (
             <motion.div
-              initial={{ scale: 0.5, opacity: 0.8 }}
-              animate={{ scale: 4, opacity: 0 }}
-              transition={{ duration: 0.5, repeat: Infinity, ease: "easeOut" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border-2 border-gold/30 rounded-full"
+              initial={{ scale: 0.5, opacity: 0.6 }}
+              animate={{ scale: 3.5, opacity: 0 }}
+              transition={{ duration: 0.6, repeat: Infinity, ease: "easeOut" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-gold/20 rounded-full"
             />
           )}
 
           {/* Main Rocket */}
           <motion.div
             animate={{ 
-              y: phase === 'warp' ? [0, -5, 0] : [0, -10, 0],
-              rotate: phase === 'warp' ? [0, 1, -1, 0] : [0, 2, -2, 0]
+              y: phase === 'warp' ? [0, -4, 0] : [0, -8, 0],
+              rotate: phase === 'warp' ? [0, 0.5, -0.5, 0] : [0, 1, -1, 0]
             }}
             transition={{ 
-              duration: 0.3, 
+              duration: 0.4, 
               repeat: Infinity,
               ease: "easeInOut"
             }}
             className="text-gold relative z-10"
           >
-            <Rocket size={120} className="drop-shadow-[0_0_40px_rgba(212,175,55,0.9)]" />
+            <Rocket size={100} className="drop-shadow-[0_0_30px_rgba(212,175,55,0.8)]" />
           </motion.div>
           
           {/* Intense Exhaust flames */}
-          <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center">
             <motion.div
               animate={{ 
-                height: phase === 'warp' ? [100, 200, 100] : [40, 80, 40],
+                height: phase === 'warp' ? [80, 160, 80] : [30, 60, 30],
                 opacity: [0.8, 1, 0.8],
-                scaleX: phase === 'warp' ? [1.2, 1.5, 1.2] : [1, 1.2, 1]
+                scaleX: phase === 'warp' ? [1.1, 1.3, 1.1] : [1, 1.1, 1]
               }}
               transition={{ 
-                duration: 0.08, 
+                duration: 0.1, 
                 repeat: Infinity,
                 ease: "linear"
               }}
-              className="w-8 bg-gradient-to-t from-transparent via-orange-600 to-gold rounded-full blur-md"
-            />
-            <motion.div
-              animate={{ 
-                height: [30, 60, 30],
-                opacity: [0.4, 0.7, 0.4]
-              }}
-              transition={{ 
-                duration: 0.04, 
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              className="w-14 bg-orange-400/20 rounded-full blur-2xl -mt-12"
+              className="w-6 bg-gradient-to-t from-transparent via-orange-600 to-gold rounded-full blur-md"
             />
           </div>
           
           {/* Speed Lines / Particles */}
-          {Array.from({ length: 20 }).map((_, i) => (
+          {Array.from({ length: 12 }).map((_, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 0 }}
               animate={{ 
                 opacity: [0, 1, 0],
-                y: [0, 300],
-                x: (Math.random() - 0.5) * 150
+                y: [0, 250],
+                x: (Math.random() - 0.5) * 120
               }}
               transition={{ 
-                duration: phase === 'warp' ? 0.2 : 0.4,
+                duration: phase === 'warp' ? 0.25 : 0.5,
                 repeat: Infinity,
-                delay: i * 0.03,
+                delay: i * 0.04,
                 ease: "easeIn"
               }}
-              className="absolute top-1/2 left-1/2 w-[1.5px] h-16 bg-gold/50 blur-[0.5px]"
+              className="absolute top-1/2 left-1/2 w-[1px] h-12 bg-gold/40 blur-[0.5px]"
             />
           ))}
         </div>
@@ -188,26 +177,26 @@ function RocketLoading() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-24 text-center relative z-20"
+          className="mt-20 text-center relative z-20"
         >
           <motion.h3 
-            animate={phase === 'warp' ? { scale: [1, 1.1, 1], color: ["#d4af37", "#fff", "#d4af37"] } : { opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 0.5, repeat: Infinity }}
-            className="text-4xl font-black text-gold uppercase tracking-[0.6em] mb-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]"
+            animate={phase === 'warp' ? { scale: [1, 1.05, 1], color: ["#d4af37", "#fff", "#d4af37"] } : { opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 0.6, repeat: Infinity }}
+            className="text-3xl md:text-4xl font-black text-gold uppercase tracking-[0.5em] mb-4 drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]"
           >
-            {phase === 'ignition' ? 'Ignition' : phase === 'warp' ? 'Warp Speed' : 'Blast Off'}
+            {message || (phase === 'ignition' ? 'Ignition' : phase === 'warp' ? 'Warp Speed' : 'Blast Off')}
           </motion.h3>
-          <p className="text-gold/60 text-sm uppercase tracking-[0.4em] font-bold">
-            {phase === 'warp' ? 'Breaking the Starwing Barrier' : 'Warping to the Starwing Network'}
+          <p className="text-gold/60 text-xs md:text-sm uppercase tracking-[0.3em] font-bold">
+            {subMessage || (phase === 'warp' ? 'Breaking the Starwing Barrier' : 'Warping to the Starwing Network')}
           </p>
           
           {/* Progress Bar */}
-          <div className="mt-10 w-72 h-1.5 bg-gold/10 rounded-full overflow-hidden mx-auto border border-gold/10 p-[1px]">
+          <div className="mt-8 w-64 md:w-72 h-1 bg-gold/10 rounded-full overflow-hidden mx-auto border border-gold/10 p-[1px]">
             <motion.div 
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
-              transition={{ duration: 3.5, ease: "linear" }}
-              className="h-full bg-gradient-to-r from-orange-500 to-gold shadow-[0_0_15px_#d4af37]"
+              transition={{ duration: 3.2, ease: "linear" }}
+              className="h-full bg-gradient-to-r from-orange-500 to-gold shadow-[0_0_10px_#d4af37]"
             />
           </div>
         </motion.div>
@@ -340,6 +329,7 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -378,9 +368,15 @@ export default function App() {
       }
     });
 
+    // Initial loading delay
+    const loadTimer = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 3500);
+
     return () => {
       unsubscribeConfig();
       unsubscribeAuth();
+      clearTimeout(loadTimer);
     };
   }, []);
 
@@ -461,6 +457,12 @@ export default function App() {
       </motion.button>
 
       <AnimatePresence>
+        {isInitialLoading && (
+          <RocketLoading 
+            message="Initializing" 
+            subMessage="Entering the Starwing Universe" 
+          />
+        )}
         {isSaving && <RocketLoading />}
       </AnimatePresence>
 
