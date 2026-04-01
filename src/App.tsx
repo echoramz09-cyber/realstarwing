@@ -1540,7 +1540,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2, duration: 1 }}
-            className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
+            className="absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
           >
             <span className="text-gold/40 text-[10px] uppercase tracking-[0.4em] font-bold">Scroll Down</span>
             <motion.div
