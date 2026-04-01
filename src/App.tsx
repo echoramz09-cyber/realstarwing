@@ -1490,7 +1490,7 @@ export default function App() {
             exit={{ opacity: 0, scale: 0.9 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8 }}
-            className="relative flex flex-col items-center z-10"
+            className="relative flex flex-col items-center z-10 -translate-y-12"
           >
             {/* Placeholder for Logo */}
             <motion.div 
