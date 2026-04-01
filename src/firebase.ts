@@ -89,6 +89,14 @@ export const INITIAL_SITE_CONFIG = {
   footer: {
     quote: "Victory is not a destination, it is a relentless pursuit of excellence.",
     visible: true
+  },
+  backgrounds: {
+    visible: true,
+    items: [
+      { id: "bg-1", url: "https://picsum.photos/seed/bg1/1920/1080", opacity: 0.1, scale: 1, blur: 0 },
+      { id: "bg-2", url: "https://picsum.photos/seed/bg2/1920/1080", opacity: 0.05, scale: 1.1, blur: 0 },
+      { id: "bg-3", url: "https://picsum.photos/seed/bg3/1920/1080", opacity: 0.05, scale: 1.2, blur: 0 }
+    ]
   }
 };
 
@@ -111,6 +119,10 @@ export async function seedSiteConfig() {
     }
     if (!data.lineups2 || (data.lineups2.players && data.lineups2.players.length < 5)) {
       updates.lineups2 = INITIAL_SITE_CONFIG.lineups2;
+      needsUpdate = true;
+    }
+    if (!data.backgrounds) {
+      updates.backgrounds = INITIAL_SITE_CONFIG.backgrounds;
       needsUpdate = true;
     }
 

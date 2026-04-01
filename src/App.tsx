@@ -83,12 +83,12 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
 
       {/* HUD Elements */}
       <div className="absolute inset-0 border-[10px] md:border-[20px] border-gold/5 pointer-events-none">
-        <div className="absolute top-6 left-6 md:top-10 md:left-10 font-mono text-[8px] md:text-[10px] text-gold/30 space-y-1">
+        <div className="absolute top-6 left-6 md:top-10 md:left-10 font-sans text-[8px] md:text-[10px] text-gold/30 space-y-1">
           <p>SYSTEM_STATUS: OVERDRIVE</p>
           <p>WARP_DRIVE: {phase === 'warp' ? 'ACTIVE' : 'CHARGING'}</p>
           <p>COORDS: STARWING_HQ_09</p>
         </div>
-        <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 font-mono text-[8px] md:text-[10px] text-gold/30 text-right space-y-1">
+        <div className="absolute bottom-6 right-6 md:bottom-10 md:right-10 font-sans text-[8px] md:text-[10px] text-gold/30 text-right space-y-1">
           <p>LATENCY: 0.001ms</p>
           <p>SYNC_PROTOCOL: EMPIRE_V2</p>
           <p>DEPLOY_PHASE: {phase.toUpperCase()}</p>
@@ -1207,6 +1207,89 @@ export default function App() {
                   </div>
                 </section>
 
+                {/* Backgrounds Section Edit */}
+                <section className="space-y-6 bg-gold/5 p-6 rounded-2xl border border-gold/10 md:col-span-2">
+                  <div className="flex items-center justify-between border-b border-gold/10 pb-2">
+                    <h3 className="text-lg font-bold uppercase tracking-widest flex items-center gap-2">
+                      <div className="w-2 h-2 bg-gold rounded-full" /> Background Images
+                    </h3>
+                    <input 
+                      type="checkbox" 
+                      checked={draftConfig.backgrounds?.visible ?? true} 
+                      onChange={(e) => setDraftConfig({ ...draftConfig, backgrounds: { ...(draftConfig.backgrounds || INITIAL_SITE_CONFIG.backgrounds), visible: e.target.checked } })}
+                      className="accent-gold w-5 h-5"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {(draftConfig.backgrounds?.items || INITIAL_SITE_CONFIG.backgrounds.items).map((bg, idx) => (
+                      <div key={bg.id} className="p-4 bg-navy/50 rounded-xl border border-gold/10 space-y-4">
+                        <h4 className="text-xs font-bold uppercase text-gold/60 tracking-widest">Background {idx + 1}</h4>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gold/40">Image URL</label>
+                          <input 
+                            type="text" 
+                            value={bg.url} 
+                            onChange={(e) => {
+                              const newItems = [...(draftConfig.backgrounds?.items || INITIAL_SITE_CONFIG.backgrounds.items)];
+                              newItems[idx] = { ...bg, url: e.target.value };
+                              setDraftConfig({ ...draftConfig, backgrounds: { ...(draftConfig.backgrounds || INITIAL_SITE_CONFIG.backgrounds), items: newItems } });
+                            }}
+                            className="w-full bg-navy border border-gold/10 rounded p-2 text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gold/40">Opacity ({bg.opacity})</label>
+                          <input 
+                            type="range" 
+                            min="0" 
+                            max="1" 
+                            step="0.01"
+                            value={bg.opacity} 
+                            onChange={(e) => {
+                              const newItems = [...(draftConfig.backgrounds?.items || INITIAL_SITE_CONFIG.backgrounds.items)];
+                              newItems[idx] = { ...bg, opacity: parseFloat(e.target.value) };
+                              setDraftConfig({ ...draftConfig, backgrounds: { ...(draftConfig.backgrounds || INITIAL_SITE_CONFIG.backgrounds), items: newItems } });
+                            }}
+                            className="w-full accent-gold"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gold/40">Scale/Zoom ({bg.scale})</label>
+                          <input 
+                            type="range" 
+                            min="1" 
+                            max="2" 
+                            step="0.01"
+                            value={bg.scale} 
+                            onChange={(e) => {
+                              const newItems = [...(draftConfig.backgrounds?.items || INITIAL_SITE_CONFIG.backgrounds.items)];
+                              newItems[idx] = { ...bg, scale: parseFloat(e.target.value) };
+                              setDraftConfig({ ...draftConfig, backgrounds: { ...(draftConfig.backgrounds || INITIAL_SITE_CONFIG.backgrounds), items: newItems } });
+                            }}
+                            className="w-full accent-gold"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gold/40">Blur ({bg.blur}px)</label>
+                          <input 
+                            type="range" 
+                            min="0" 
+                            max="20" 
+                            step="1"
+                            value={bg.blur || 0} 
+                            onChange={(e) => {
+                              const newItems = [...(draftConfig.backgrounds?.items || INITIAL_SITE_CONFIG.backgrounds.items)];
+                              newItems[idx] = { ...bg, blur: parseInt(e.target.value) };
+                              setDraftConfig({ ...draftConfig, backgrounds: { ...(draftConfig.backgrounds || INITIAL_SITE_CONFIG.backgrounds), items: newItems } });
+                            }}
+                            className="w-full accent-gold"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
                 {/* Footer Section Edit */}
                 <section className="space-y-6 bg-gold/5 p-6 rounded-2xl border border-gold/10 md:col-span-2">
                   <div className="flex items-center justify-between border-b border-gold/10 pb-2">
@@ -1398,7 +1481,7 @@ export default function App() {
       </motion.header>
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col relative">
+      <main className="flex-grow flex flex-col relative overflow-x-hidden">
         {/* Hero Section */}
         <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 relative">
           <motion.div 
@@ -1699,27 +1782,69 @@ export default function App() {
           </section>
         )}
 
-        {/* Decorative background elements - Optimized for performance */}
+        {/* Background Images Layer */}
+        {siteConfig.backgrounds?.visible && (
+          <div className="fixed inset-0 pointer-events-none overflow-hidden -z-20">
+            {(siteConfig.backgrounds?.items || []).map((bg: any) => (
+              <div 
+                key={bg.id}
+                className="absolute inset-0 w-full h-full transition-all duration-1000"
+                style={{ 
+                  opacity: bg.opacity,
+                  filter: `blur(${bg.blur || 0}px)`,
+                  maskImage: 'radial-gradient(circle, black 40%, transparent 100%)',
+                  WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 100%)'
+                }}
+              >
+                <img 
+                  src={bg.url} 
+                  alt="Background" 
+                  className="w-full h-full object-cover"
+                  style={{ 
+                    transform: `scale(${bg.scale || 1})`,
+                  }}
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Decorative background elements - Enhanced Light Leaks */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          {/* Moving Light Leaks */}
+          {/* Blue Light Leak */}
           <motion.div 
             animate={{ 
-              x: [-100, 100, -100],
-              y: [-50, 50, -50],
-              opacity: [0.1, 0.2, 0.1]
+              x: [-200, 200, -200],
+              y: [-100, 100, -100],
+              scale: [1, 1.3, 1],
+              opacity: [0.3, 0.5, 0.3]
             }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute top-0 -right-40 w-[800px] h-[600px] bg-blue-glow/10 rounded-[40%] blur-[120px]" 
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="absolute top-[-10%] right-[-10%] w-[1200px] h-[900px] bg-blue-glow/40 rounded-full blur-[160px]" 
           />
           
+          {/* Gold Light Leak */}
           <motion.div 
             animate={{ 
-              x: [100, -100, 100],
-              y: [50, -50, 50],
-              opacity: [0.05, 0.1, 0.05]
+              x: [200, -200, 200],
+              y: [100, -100, 100],
+              scale: [1.3, 1, 1.3],
+              opacity: [0.2, 0.4, 0.2]
             }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-40 -left-40 w-[800px] h-[600px] bg-gold/5 rounded-[40%] blur-[120px]" 
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute bottom-[-10%] left-[-10%] w-[1200px] h-[900px] bg-gold/30 rounded-full blur-[160px]" 
+          />
+
+          {/* Additional Purple/Pink Accent Leak */}
+          <motion.div 
+            animate={{ 
+              x: [-150, 150, -150],
+              y: [150, -150, 150],
+              opacity: [0.15, 0.3, 0.15]
+            }}
+            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-purple-500/20 rounded-full blur-[200px]" 
           />
         </div>
       </main>
