@@ -1533,21 +1533,21 @@ export default function App() {
                 {siteConfig.hero.subtitle}
               </p>
             </motion.div>
+          </motion.div>
 
-            {/* Scroll Down Indicator */}
+          {/* Scroll Down Indicator - Moved outside centered container to be at section bottom */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2, duration: 1 }}
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
+          >
+            <span className="text-gold/40 text-[10px] uppercase tracking-[0.4em] font-bold">Scroll Down</span>
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 2, duration: 1 }}
-              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
-              <span className="text-gold/40 text-[10px] uppercase tracking-[0.4em] font-bold">Scroll Down</span>
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <ChevronDown className="text-gold/60 w-6 h-6" />
-              </motion.div>
+              <ChevronDown className="text-gold/60 w-6 h-6" />
             </motion.div>
           </motion.div>
         </section>
