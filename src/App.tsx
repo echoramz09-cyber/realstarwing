@@ -1455,7 +1455,7 @@ export default function App() {
 
         {/* About Us Section */}
         {siteConfig.about.visible && (
-          <section id="about" className="py-32 px-4 relative bg-gold/[0.02]">
+          <section id="about" className="py-16 px-4 relative bg-gold/[0.02]">
             <div className="max-w-4xl mx-auto text-center">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -1478,7 +1478,7 @@ export default function App() {
 
         {/* Roster Section */}
         {siteConfig.roster.visible && (
-          <section id="roster" className="py-24 px-4 relative">
+          <section id="roster" className="py-12 px-4 relative">
             <div className="max-w-6xl mx-auto flex flex-col items-center">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -1532,7 +1532,7 @@ export default function App() {
 
         {/* Lineups Section */}
         {(siteConfig.lineups1?.visible || siteConfig.lineups2?.visible) && (
-          <section id="lineups" className="py-24 px-4 relative">
+          <section id="lineups" className="py-12 px-4 relative">
             <div className="max-w-6xl mx-auto flex flex-col items-center gap-24">
               
               {/* Lineup 1 */}
@@ -1615,7 +1615,7 @@ export default function App() {
 
         {/* Achievements Section */}
         {siteConfig.achievements.visible && (
-          <section id="achievements" className="py-24 px-4 relative">
+          <section id="achievements" className="py-12 px-4 relative">
             <div className="max-w-6xl mx-auto flex flex-col items-center">
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
@@ -1645,7 +1645,7 @@ export default function App() {
 
         {/* Socials Section */}
         {siteConfig.socials.visible && (
-          <section id="socials" className="py-24 px-4 relative bg-gold/[0.02]">
+          <section id="socials" className="py-12 px-4 relative bg-gold/[0.02]">
             <div className="max-w-4xl mx-auto flex flex-col items-center">
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
@@ -1701,12 +1701,26 @@ export default function App() {
 
         {/* Decorative background elements - Optimized for performance */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-
-          {/* Static Glows instead of moving ones to save performance */}
-          <div className="absolute top-0 -right-40 w-[800px] h-[600px] bg-blue-glow/10 rounded-[40%] blur-[120px]" />
+          {/* Moving Light Leaks */}
+          <motion.div 
+            animate={{ 
+              x: [-100, 100, -100],
+              y: [-50, 50, -50],
+              opacity: [0.1, 0.2, 0.1]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute top-0 -right-40 w-[800px] h-[600px] bg-blue-glow/10 rounded-[40%] blur-[120px]" 
+          />
           
-          <div className="absolute -bottom-40 -left-40 w-[800px] h-[600px] bg-gold/5 rounded-[40%] blur-[120px]" />
-
+          <motion.div 
+            animate={{ 
+              x: [100, -100, 100],
+              y: [50, -50, 50],
+              opacity: [0.05, 0.1, 0.05]
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-40 -left-40 w-[800px] h-[600px] bg-gold/5 rounded-[40%] blur-[120px]" 
+          />
         </div>
       </main>
 
