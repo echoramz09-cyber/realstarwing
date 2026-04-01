@@ -24,7 +24,7 @@ const DiscordIcon = ({ size = 24, className = "" }: { size?: number; className?:
 );
 
 function RocketLoading({ message, subMessage }: { message?: string, subMessage?: string }) {
-  const stars = useMemo(() => Array.from({ length: 40 }).map((_, i) => ({
+  const stars = useMemo(() => Array.from({ length: 20 }).map((_, i) => ({
     id: i,
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
@@ -51,7 +51,7 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-[#02040a] overflow-hidden"
     >
-      {/* Starfield Background - Optimized */}
+      {/* Starfield Background - Highly Optimized */}
       <div className="absolute inset-0 pointer-events-none">
         {stars.map((star) => (
           <motion.div
@@ -59,11 +59,11 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
             initial={{ y: -100, opacity: 0 }}
             animate={{ 
               y: ["0vh", "100vh"],
-              height: phase === 'warp' ? [star.size, 80, star.size] : star.size,
+              height: phase === 'warp' ? [star.size, 60, star.size] : star.size,
               opacity: [0, 1, 1, 0]
             }}
             transition={{ 
-              duration: phase === 'warp' ? star.duration * 0.3 : star.duration,
+              duration: phase === 'warp' ? star.duration * 0.4 : star.duration,
               repeat: Infinity,
               delay: star.delay,
               ease: "linear"
@@ -74,8 +74,8 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
               width: star.size,
               backgroundColor: phase === 'warp' ? '#fff' : '#d4af37',
               borderRadius: '999px',
-              filter: phase === 'warp' ? 'blur(1px)' : 'none',
-              willChange: 'transform'
+              willChange: 'transform',
+              transform: 'translateZ(0)'
             }}
           />
         ))}
@@ -98,11 +98,11 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
       {/* Screen Shake Container */}
       <motion.div
         animate={phase === 'blastoff' ? { y: -1200, opacity: 0 } : { 
-          x: phase === 'warp' ? [0, -3, 3, -1, 1, 0] : [0, -1, 1, 0],
-          y: phase === 'warp' ? [0, 1, -1, 2, -2, 0] : [0, 0.5, -0.5, 0]
+          x: phase === 'warp' ? [0, -2, 2, 0] : [0, -0.5, 0.5, 0],
+          y: phase === 'warp' ? [0, 1, -1, 0] : [0, 0.2, -0.2, 0]
         }}
         transition={{ 
-          duration: phase === 'warp' ? 0.06 : 0.12,
+          duration: phase === 'warp' ? 0.08 : 0.15,
           repeat: phase === 'blastoff' ? 0 : Infinity,
           ease: phase === 'blastoff' ? "easeIn" : "linear"
         }}
@@ -112,63 +112,61 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
           {/* Sonic Boom / Shockwave */}
           {phase === 'warp' && (
             <motion.div
-              initial={{ scale: 0.5, opacity: 0.6 }}
-              animate={{ scale: 3.5, opacity: 0 }}
-              transition={{ duration: 0.6, repeat: Infinity, ease: "easeOut" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-gold/20 rounded-full"
+              initial={{ scale: 0.5, opacity: 0.4 }}
+              animate={{ scale: 3, opacity: 0 }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: "easeOut" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-gold/10 rounded-full"
             />
           )}
 
           {/* Main Rocket */}
           <motion.div
             animate={{ 
-              y: phase === 'warp' ? [0, -4, 0] : [0, -8, 0],
-              rotate: phase === 'warp' ? [0, 0.5, -0.5, 0] : [0, 1, -1, 0]
+              y: phase === 'warp' ? [0, -2, 0] : [0, -4, 0],
             }}
             transition={{ 
-              duration: 0.4, 
+              duration: 0.5, 
               repeat: Infinity,
               ease: "easeInOut"
             }}
             className="text-gold relative z-10"
           >
-            <Rocket size={100} className="drop-shadow-[0_0_30px_rgba(212,175,55,0.8)]" />
+            <Rocket size={80} className="drop-shadow-[0_0_20px_rgba(212,175,55,0.6)]" />
           </motion.div>
           
           {/* Intense Exhaust flames */}
-          <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
             <motion.div
               animate={{ 
-                height: phase === 'warp' ? [80, 160, 80] : [30, 60, 30],
+                height: phase === 'warp' ? [60, 120, 60] : [20, 40, 20],
                 opacity: [0.8, 1, 0.8],
-                scaleX: phase === 'warp' ? [1.1, 1.3, 1.1] : [1, 1.1, 1]
               }}
               transition={{ 
-                duration: 0.1, 
+                duration: 0.15, 
                 repeat: Infinity,
                 ease: "linear"
               }}
-              className="w-6 bg-gradient-to-t from-transparent via-orange-600 to-gold rounded-full blur-md"
+              className="w-4 bg-gradient-to-t from-transparent via-orange-600 to-gold rounded-full blur-sm"
             />
           </div>
           
           {/* Speed Lines / Particles */}
-          {Array.from({ length: 12 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 0 }}
               animate={{ 
                 opacity: [0, 1, 0],
-                y: [0, 250],
-                x: (Math.random() - 0.5) * 120
+                y: [0, 200],
+                x: (Math.random() - 0.5) * 100
               }}
               transition={{ 
-                duration: phase === 'warp' ? 0.25 : 0.5,
+                duration: phase === 'warp' ? 0.3 : 0.6,
                 repeat: Infinity,
-                delay: i * 0.04,
+                delay: i * 0.06,
                 ease: "easeIn"
               }}
-              className="absolute top-1/2 left-1/2 w-[1px] h-12 bg-gold/40 blur-[0.5px]"
+              className="absolute top-1/2 left-1/2 w-[1px] h-10 bg-gold/30"
             />
           ))}
         </div>
@@ -177,21 +175,21 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-20 text-center relative z-20"
+          className="mt-16 text-center relative z-20"
         >
           <motion.h3 
-            animate={phase === 'warp' ? { scale: [1, 1.05, 1], color: ["#d4af37", "#fff", "#d4af37"] } : { opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 0.6, repeat: Infinity }}
-            className="text-3xl md:text-4xl font-black text-gold uppercase tracking-[0.5em] mb-4 drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]"
+            animate={phase === 'warp' ? { scale: [1, 1.02, 1], color: ["#d4af37", "#fff", "#d4af37"] } : { opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 0.8, repeat: Infinity }}
+            className="text-3xl md:text-4xl font-bold text-gold uppercase tracking-[0.5em] mb-4 drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]"
           >
             {message || (phase === 'ignition' ? 'Ignition' : phase === 'warp' ? 'Warp Speed' : 'Blast Off')}
           </motion.h3>
-          <p className="text-gold/60 text-xs md:text-sm uppercase tracking-[0.3em] font-bold">
+          <p className="text-gold/60 text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">
             {subMessage || (phase === 'warp' ? 'Breaking the Starwing Barrier' : 'Warping to the Starwing Network')}
           </p>
           
           {/* Progress Bar */}
-          <div className="mt-8 w-64 md:w-72 h-1 bg-gold/10 rounded-full overflow-hidden mx-auto border border-gold/10 p-[1px]">
+          <div className="mt-6 w-56 md:w-64 h-1 bg-gold/10 rounded-full overflow-hidden mx-auto border border-gold/10 p-[1px]">
             <motion.div 
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
@@ -218,15 +216,15 @@ function PlayerCard({ player, index }: any) {
   const displayImage = player.photoUrl || player.image || `https://picsum.photos/seed/${player.id}/400/600`;
   
   return (
-    <motion.div
-      initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: isEven ? -50 : 50 }}
-      whileHover={{ scale: 1.02, backgroundColor: "rgba(212, 175, 55, 0.08)" }}
-      viewport={{ once: false, amount: 0.2 }}
-      transition={{ duration: 0.6 }}
-      className={`flex items-center gap-4 p-4 rounded-xl bg-gold/5 backdrop-blur-sm border border-gold/10 max-w-md w-full ${isEven ? 'flex-row' : 'flex-row-reverse text-right'}`}
-    >
+      <motion.div
+        initial={{ opacity: 0, x: isEven ? -50 : 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: isEven ? -50 : 50 }}
+        whileHover={{ scale: 1.02, backgroundColor: "rgba(212, 175, 55, 0.08)" }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6 }}
+        className={`flex items-center gap-4 p-4 rounded-xl bg-gold/5 backdrop-blur-sm border border-gold/10 max-w-md w-full ${isEven ? 'flex-row' : 'flex-row-reverse text-right'}`}
+      >
       {/* Player Image */}
       <div className="shrink-0">
         <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 border-gold/20 grayscale hover:grayscale-0 transition-all duration-500">
@@ -241,7 +239,7 @@ function PlayerCard({ player, index }: any) {
 
       {/* Player Info */}
       <div className="flex flex-col gap-1">
-        <h3 className="text-lg font-black text-gold uppercase leading-tight">{player.name}</h3>
+        <h3 className="text-lg font-bold text-gold uppercase leading-tight">{player.name}</h3>
         <span className="text-xs font-bold text-gold/60 uppercase tracking-widest">{player.role}</span>
         {player.description && <p className="text-[10px] md:text-xs text-white/60 line-clamp-2 mt-1">{player.description}</p>}
         
@@ -294,15 +292,15 @@ function PlayerCard({ player, index }: any) {
 
 function AchievementCard({ achievement, index }: any) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 50 }}
-      viewport={{ once: false, amount: 0.2 }}
-      transition={{ duration: 0.8, delay: index * 0.1 }}
-      whileHover={{ y: -10 }}
-      className="flex flex-col bg-gold/5 backdrop-blur-sm border border-gold/10 rounded-2xl overflow-hidden group"
-    >
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.8, delay: index * 0.1 }}
+        whileHover={{ y: -10 }}
+        className="flex flex-col bg-gold/5 backdrop-blur-sm border border-gold/10 rounded-2xl overflow-hidden group"
+      >
       <div className="aspect-video overflow-hidden">
         <img 
           src={achievement.photoUrl || achievement.image} 
@@ -313,7 +311,7 @@ function AchievementCard({ achievement, index }: any) {
       </div>
       <div className="p-6 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-black text-gold uppercase tracking-tight">{achievement.title}</h3>
+          <h3 className="text-xl font-bold text-gold uppercase tracking-tight">{achievement.title}</h3>
           {achievement.date && <span className="text-[10px] text-gold/40 font-bold uppercase">{achievement.date}</span>}
         </div>
         <p className="text-sm text-gold/70 leading-relaxed">{achievement.description}</p>
@@ -478,7 +476,7 @@ export default function App() {
             <div className="max-w-5xl mx-auto w-full flex-1">
               <div className="flex items-center justify-between mb-12 sticky top-0 bg-navy/90 backdrop-blur-md py-4 z-10 border-b border-gold/10">
                 <div>
-                  <h2 className="text-3xl font-black uppercase tracking-widest">Admin Control Center</h2>
+                  <h2 className="text-3xl font-bold uppercase tracking-widest">Admin Control Center</h2>
                   <p className="text-gold/40 text-xs mt-1 uppercase tracking-widest">Manage your empire's digital presence</p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -1261,7 +1259,7 @@ export default function App() {
               >
                 <X size={20} />
               </button>
-              <h2 className="text-2xl font-black text-gold uppercase tracking-widest mb-6 text-center">Admin Login</h2>
+              <h2 className="text-2xl font-bold text-gold uppercase tracking-widest mb-6 text-center">Admin Login</h2>
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-[10px] uppercase tracking-[0.2em] text-gold/60 font-bold">Username</label>
@@ -1286,7 +1284,7 @@ export default function App() {
                 {loginError && <p className="text-red-500 text-xs text-center font-bold uppercase tracking-widest">{loginError}</p>}
                 <button 
                   type="submit"
-                  className="w-full py-4 bg-gold text-navy font-black uppercase tracking-[0.2em] rounded-lg hover:bg-white transition-colors"
+                  className="w-full py-4 bg-gold text-navy font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-white transition-colors"
                 >
                   Access Panel
                 </button>
@@ -1306,7 +1304,7 @@ export default function App() {
         className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-12 flex items-center justify-between bg-navy/80 backdrop-blur-md border-b border-gold/10"
       >
         <div className="flex items-center">
-          <span className="text-xl font-black tracking-tighter text-gold uppercase">
+          <span className="text-xl font-bold tracking-tighter text-gold uppercase">
             Starwing Empire
           </span>
         </div>
@@ -1389,7 +1387,7 @@ export default function App() {
                     "#"
                   }
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-xs font-black text-gold uppercase tracking-[0.4em] hover:text-white transition-colors"
+                  className="text-xs font-bold text-gold uppercase tracking-[0.4em] hover:text-white transition-colors"
                 >
                   {item}
                 </motion.a>
@@ -1407,7 +1405,7 @@ export default function App() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8 }}
             className="relative flex flex-col items-center z-10"
           >
@@ -1429,7 +1427,7 @@ export default function App() {
               ) : (
                 <>
                   {/* Decorative rings */}
-                  <div className="absolute inset-0 border-2 border-gold/20 rounded-full animate-ping opacity-20" />
+                  <div className="absolute inset-0 border-2 border-gold/20 rounded-full opacity-20" />
                   <div className="absolute -inset-4 border border-gold/10 rounded-full" />
                   
                   {/* Inner glow */}
@@ -1445,7 +1443,7 @@ export default function App() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="text-center"
             >
-              <h1 className="text-4xl md:text-6xl font-black text-gold tracking-tight mb-2 uppercase">
+              <h1 className="text-4xl md:text-6xl font-bold text-gold tracking-tight mb-2 uppercase">
                 {siteConfig.hero.title}
               </h1>
               <p className="text-gold/80 text-lg md:text-xl font-bold tracking-[0.2em] uppercase">
@@ -1463,11 +1461,11 @@ export default function App() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 40 }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.8 }}
                 style={{ scale: siteConfig.about.scale || 1 }}
               >
-                <h2 className="text-3xl md:text-5xl font-black text-gold tracking-widest uppercase mb-8">
+                <h2 className="text-3xl md:text-5xl font-bold text-gold tracking-widest uppercase mb-8">
                   {siteConfig.about.title}
                 </h2>
                 <div className="space-y-6 text-gold/80 text-lg md:text-xl leading-relaxed font-medium whitespace-pre-wrap">
@@ -1485,11 +1483,11 @@ export default function App() {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.8 }}
                 className="w-full flex flex-col items-center"
               >
-                <h2 className="text-3xl md:text-5xl font-black text-gold tracking-widest uppercase mb-12">
+                <h2 className="text-3xl md:text-5xl font-bold text-gold tracking-widest uppercase mb-12">
                   {siteConfig.roster.title}
                 </h2>
                 
@@ -1543,8 +1541,8 @@ export default function App() {
                   <motion.h2 
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.5 }}
-                    className="text-2xl md:text-4xl font-black text-gold tracking-widest uppercase mb-12"
+                    viewport={{ once: true, amount: 0.5 }}
+                    className="text-2xl md:text-4xl font-bold text-gold tracking-widest uppercase mb-12"
                   >
                     {siteConfig.lineups1.title}
                   </motion.h2>
@@ -1581,7 +1579,7 @@ export default function App() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: false, amount: 0.5 }}
-                    className="text-2xl md:text-4xl font-black text-gold tracking-widest uppercase mb-12"
+                    className="text-2xl md:text-4xl font-bold text-gold tracking-widest uppercase mb-12"
                   >
                     {siteConfig.lineups2.title}
                   </motion.h2>
@@ -1623,8 +1621,8 @@ export default function App() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                viewport={{ once: false, amount: 0.5 }}
-                className="text-3xl md:text-5xl font-black text-gold tracking-widest uppercase mb-16"
+                viewport={{ once: true, amount: 0.5 }}
+                className="text-3xl md:text-5xl font-bold text-gold tracking-widest uppercase mb-16"
               >
                 {siteConfig.achievements.title}
               </motion.h2>
@@ -1653,8 +1651,8 @@ export default function App() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                viewport={{ once: false, amount: 0.5 }}
-                className="text-2xl md:text-4xl font-black text-gold tracking-widest uppercase mb-16"
+                viewport={{ once: true, amount: 0.5 }}
+                className="text-2xl md:text-4xl font-bold text-gold tracking-widest uppercase mb-16"
               >
                 {siteConfig.socials.title}
               </motion.h2>
@@ -1682,6 +1680,7 @@ export default function App() {
                       initial={{ opacity: 0, scale: 0.8 }}
                       whileInView={{ opacity: 1, scale: 1 }}
                       whileHover={{ y: -10, scale: 1.1 }}
+                      viewport={{ once: true }}
                       transition={{ duration: 0.3, delay: idx * 0.1 }}
                       className="flex flex-col items-center gap-4 group"
                     >
@@ -1700,75 +1699,14 @@ export default function App() {
           </section>
         )}
 
-        {/* Decorative background elements */}
+        {/* Decorative background elements - Optimized for performance */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          {/* Moving Particles */}
-          {particles.map((p) => (
-            <motion.div
-              key={p.id}
-              initial={{ x: `${p.x}vw`, y: `${p.y}vh`, opacity: 0 }}
-              animate={{ 
-                x: [`${p.x}vw`, `${(p.x + 15) % 100}vw`, `${p.x}vw`],
-                y: [`${p.y}vh`, `${(p.y - 15 + 100) % 100}vh`, `${p.y}vh`],
-                opacity: [0, 0.8, 0]
-              }}
-              transition={{ 
-                duration: p.duration, 
-                repeat: Infinity, 
-                delay: p.delay,
-                ease: "linear" 
-              }}
-              style={{ width: p.size, height: p.size }}
-              className="absolute bg-blue-glow/60 rounded-full shadow-[0_0_10px_rgba(0,102,255,0.8)]"
-            />
-          ))}
 
-          {/* Dynamic Moving Blue Light Leaks */}
-          <motion.div 
-            animate={{ 
-              x: [-150, 150, -150],
-              y: [-100, 100, -100],
-              rotate: [0, 90, 0],
-              scale: [1, 1.5, 1],
-              opacity: [0.2, 0.4, 0.2] 
-            }}
-            transition={{ 
-              duration: 15, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-            className="absolute top-0 -right-40 w-[1000px] h-[800px] bg-blue-glow/40 rounded-[40%] blur-[120px]" 
-          />
+          {/* Static Glows instead of moving ones to save performance */}
+          <div className="absolute top-0 -right-40 w-[800px] h-[600px] bg-blue-glow/10 rounded-[40%] blur-[120px]" />
           
-          <motion.div 
-            animate={{ 
-              x: [150, -150, 150],
-              y: [100, -100, 100],
-              rotate: [0, -60, 0],
-              scale: [1.4, 1, 1.4],
-              opacity: [0.15, 0.3, 0.15] 
-            }}
-            transition={{ 
-              duration: 20, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-            className="absolute -bottom-60 -left-60 w-[1200px] h-[900px] bg-blue-glow/30 rounded-[30%] blur-[140px]" 
-          />
+          <div className="absolute -bottom-40 -left-40 w-[800px] h-[600px] bg-gold/5 rounded-[40%] blur-[120px]" />
 
-          <motion.div 
-            animate={{ 
-              x: [-300, 300, -300],
-              y: [200, -200, 200],
-              opacity: [0, 0.2, 0] 
-            }}
-            transition={{ 
-              duration: 12, 
-              repeat: Infinity, 
-              ease: "easeInOut" 
-            }}
-            className="absolute top-1/2 left-1/4 w-[600px] h-[500px] bg-blue-glow/20 rounded-full blur-[100px]" 
-          />
         </div>
       </main>
 
@@ -1783,7 +1721,7 @@ export default function App() {
         >
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col items-center md:items-start gap-2">
-              <span className="text-gold font-black tracking-widest uppercase">Starwing Empire</span>
+              <span className="text-gold font-bold tracking-widest uppercase">Starwing Empire</span>
               <span className="text-gold/40 text-xs tracking-wider">© 2026 Starwing Empire. All rights reserved.</span>
             </div>
             
