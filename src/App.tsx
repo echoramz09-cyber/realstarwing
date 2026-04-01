@@ -1220,10 +1220,10 @@ export default function App() {
                       className="accent-gold w-5 h-5"
                     />
                   </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {(draftConfig.backgrounds?.items || INITIAL_SITE_CONFIG.backgrounds.items).map((bg, idx) => (
-                      <div key={bg.id} className="p-4 bg-navy/50 rounded-xl border border-gold/10 space-y-4">
-                        <h4 className="text-xs font-bold uppercase text-gold/60 tracking-widest">Background {idx + 1}</h4>
+                  <div className="grid grid-cols-1 gap-6">
+                    {(draftConfig.backgrounds?.items || INITIAL_SITE_CONFIG.backgrounds.items).slice(0, 1).map((bg, idx) => (
+                      <div key={bg.id} className="p-4 bg-navy/50 rounded-xl border border-gold/10 space-y-4 max-w-xl mx-auto w-full">
+                        <h4 className="text-xs font-bold uppercase text-gold/60 tracking-widest">Main Background</h4>
                         <div className="space-y-2">
                           <label className="text-[10px] uppercase tracking-widest text-gold/40">Image URL</label>
                           <input 

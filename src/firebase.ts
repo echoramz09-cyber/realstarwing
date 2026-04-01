@@ -93,9 +93,7 @@ export const INITIAL_SITE_CONFIG = {
   backgrounds: {
     visible: true,
     items: [
-      { id: "bg-1", url: "https://picsum.photos/seed/bg1/1920/1080", opacity: 0.1, scale: 1, blur: 0 },
-      { id: "bg-2", url: "https://picsum.photos/seed/bg2/1920/1080", opacity: 0.05, scale: 1.1, blur: 0 },
-      { id: "bg-3", url: "https://picsum.photos/seed/bg3/1920/1080", opacity: 0.05, scale: 1.2, blur: 0 }
+      { id: "bg-1", url: "https://picsum.photos/seed/bg1/1920/1080", opacity: 0.1, scale: 1, blur: 0 }
     ]
   }
 };
