@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "motion/react";
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Youtube, Instagram, MessageSquare, Menu, X, Linkedin, Twitter, Settings, Save, Trash2, Plus, LogIn, LogOut, ChevronDown, ChevronUp, Image as ImageIcon, Maximize, Minimize, ExternalLink, Rocket } from "lucide-react";
 import { db, auth, INITIAL_SITE_CONFIG, seedSiteConfig, testConnection, ADMIN_USERNAME, ADMIN_PASSWORD } from "./firebase";
@@ -333,6 +333,15 @@ export default function App() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // Scroll-linked background zoom
+  const { scrollYProgress } = useScroll();
+  const rawScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  const smoothScale = useSpring(rawScale, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   // Firebase Initialization and Sync
   useEffect(() => {
@@ -1485,12 +1494,12 @@ export default function App() {
         {/* Hero Section */}
         <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 relative">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8 }}
-            className="relative flex flex-col items-center z-10 -translate-y-12"
+            className="relative flex flex-col items-center z-10 -translate-y-24"
           >
             {/* Placeholder for Logo */}
             <motion.div 
@@ -1804,18 +1813,18 @@ export default function App() {
             {(siteConfig.backgrounds?.items || []).map((bg: any) => (
               <div 
                 key={bg.id}
-                className="absolute inset-0 w-full h-full transition-all duration-1000"
+                className="absolute inset-0 w-full h-full"
                 style={{ 
                   opacity: bg.opacity,
                   filter: `blur(${bg.blur || 0}px)`,
                 }}
               >
-                <img 
+                <motion.img 
                   src={bg.url} 
                   alt="Background" 
                   className="w-full h-full object-cover"
                   style={{ 
-                    transform: `scale(${bg.scale || 1})`,
+                    scale: smoothScale,
                   }}
                   referrerPolicy="no-referrer"
                 />
