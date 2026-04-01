@@ -223,7 +223,7 @@ function PlayerCard({ player, index }: any) {
         whileHover={{ scale: 1.02, backgroundColor: "rgba(212, 175, 55, 0.08)" }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6 }}
-        className={`flex items-center gap-4 p-4 rounded-xl bg-gold/5 backdrop-blur-sm border border-gold/10 max-w-md w-full ${isEven ? 'flex-row' : 'flex-row-reverse text-right'}`}
+        className={`flex items-center gap-4 p-4 rounded-xl bg-navy/80 border border-gold/10 max-w-md w-full ${isEven ? 'flex-row' : 'flex-row-reverse text-right'}`}
       >
       {/* Player Image */}
       <div className="shrink-0">
@@ -299,7 +299,7 @@ function AchievementCard({ achievement, index }: any) {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.8, delay: index * 0.1 }}
         whileHover={{ y: -10 }}
-        className="flex flex-col bg-gold/5 backdrop-blur-sm border border-gold/10 rounded-2xl overflow-hidden group"
+        className="flex flex-col bg-navy/80 border border-gold/10 rounded-2xl overflow-hidden group"
       >
       <div className="aspect-video overflow-hidden">
         <img 
@@ -474,7 +474,7 @@ export default function App() {
             className="fixed inset-0 bg-navy z-[90] overflow-y-auto p-4 md:p-12 text-gold flex flex-col"
           >
             <div className="max-w-5xl mx-auto w-full flex-1">
-              <div className="flex items-center justify-between mb-12 sticky top-0 bg-navy/90 backdrop-blur-md py-4 z-10 border-b border-gold/10">
+              <div className="flex items-center justify-between mb-12 sticky top-0 bg-navy/95 py-4 z-10 border-b border-gold/10">
                 <div>
                   <h2 className="text-3xl font-bold uppercase tracking-widest">Admin Control Center</h2>
                   <p className="text-gold/40 text-xs mt-1 uppercase tracking-widest">Manage your empire's digital presence</p>
@@ -1328,7 +1328,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/85 p-4"
           >
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
@@ -1384,7 +1384,7 @@ export default function App() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-12 flex items-center justify-between bg-navy/80 backdrop-blur-md border-b border-gold/10"
+        className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-12 flex items-center justify-between bg-navy/95 border-b border-gold/10"
       >
         <div className="flex items-center">
           <span className="text-xl font-bold tracking-tighter text-gold uppercase">
@@ -1443,7 +1443,7 @@ export default function App() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-50 md:hidden bg-black/60 backdrop-blur-md flex flex-col items-center justify-center gap-8"
+              className="fixed inset-0 z-50 md:hidden bg-black/90 flex flex-col items-center justify-center gap-8"
             >
               {["Home", "About Us", "Roster", "Lineups", "Achievements", "Socials"].filter(item => {
                 const isVisible = 
@@ -1498,7 +1498,7 @@ export default function App() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
               style={{ scale: siteConfig.hero.logoScale }}
-              className={`w-48 h-48 md:w-64 md:h-64 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 backdrop-blur-sm mb-8 relative group ${!siteConfig.hero.logoVisible ? 'hidden' : ''}`}
+              className={`w-48 h-48 md:w-64 md:h-64 rounded-full border-4 border-gold/30 flex items-center justify-center bg-navy/80 mb-8 relative group ${!siteConfig.hero.logoVisible ? 'hidden' : ''}`}
             >
               {siteConfig.hero.logoUrl ? (
                 <img 
@@ -1532,6 +1532,22 @@ export default function App() {
               <p className="text-gold/80 text-lg md:text-xl font-bold tracking-[0.2em] uppercase">
                 {siteConfig.hero.subtitle}
               </p>
+            </motion.div>
+
+            {/* Scroll Down Indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2, duration: 1 }}
+              className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            >
+              <span className="text-gold/40 text-[10px] uppercase tracking-[0.4em] font-bold">Scroll Down</span>
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <ChevronDown className="text-gold/60 w-6 h-6" />
+              </motion.div>
             </motion.div>
           </motion.div>
         </section>
@@ -1792,8 +1808,6 @@ export default function App() {
                 style={{ 
                   opacity: bg.opacity,
                   filter: `blur(${bg.blur || 0}px)`,
-                  maskImage: 'radial-gradient(circle, black 40%, transparent 100%)',
-                  WebkitMaskImage: 'radial-gradient(circle, black 40%, transparent 100%)'
                 }}
               >
                 <img 
@@ -1812,40 +1826,6 @@ export default function App() {
 
         {/* Decorative background elements - Enhanced Light Leaks */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          {/* Blue Light Leak */}
-          <motion.div 
-            animate={{ 
-              x: [-200, 200, -200],
-              y: [-100, 100, -100],
-              scale: [1, 1.3, 1],
-              opacity: [0.3, 0.5, 0.3]
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute top-[-10%] right-[-10%] w-[1200px] h-[900px] bg-blue-glow/40 rounded-full blur-[160px]" 
-          />
-          
-          {/* Gold Light Leak */}
-          <motion.div 
-            animate={{ 
-              x: [200, -200, 200],
-              y: [100, -100, 100],
-              scale: [1.3, 1, 1.3],
-              opacity: [0.2, 0.4, 0.2]
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute bottom-[-10%] left-[-10%] w-[1200px] h-[900px] bg-gold/30 rounded-full blur-[160px]" 
-          />
-
-          {/* Additional Purple/Pink Accent Leak */}
-          <motion.div 
-            animate={{ 
-              x: [-150, 150, -150],
-              y: [150, -150, 150],
-              opacity: [0.15, 0.3, 0.15]
-            }}
-            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[700px] bg-purple-500/20 rounded-full blur-[200px]" 
-          />
         </div>
       </main>
 
@@ -1856,7 +1836,7 @@ export default function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
           style={{ scale: siteConfig.footer.scale || 1 }}
-          className="px-6 py-8 md:px-12 border-t border-gold/10 bg-navy/50 backdrop-blur-sm"
+          className="px-6 py-8 md:px-12 border-t border-gold/10 bg-navy/80"
         >
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col items-center md:items-start gap-2">
