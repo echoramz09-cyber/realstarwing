@@ -1,27 +1,61 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
     // Helper functions
-    function isAuthenticated() {
+    function isSignedIn() {
       return request.auth != null;
     }
-    
+
+    function isEmailVerified() {
+      return isSignedIn() && (request.auth.token.email_verified == true || request.auth.token.firebase.sign_in_provider == 'anonymous');
+    }
+
     function isAdmin() {
-      // For this specific request, we are using a custom username/password login
-      // that signs in anonymously to satisfy Firebase Auth requirements.
-      // We'll trust the authenticated session for write access to the config.
-      return isAuthenticated();
+      return isEmailVerified() && (
+        request.auth.token.email == "richspoiz09@gmail.com" ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.firebase.sign_in_provider == 'anonymous' // Trusting anonymous for the custom panel as per previous setup
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation for site config (simplified check for presence and main types)
+    function isValidSiteConfig(data) {
+      return data.keys().hasAll(['hero', 'about', 'roster', 'lineups1', 'lineups2', 'achievements', 'socials', 'footer', 'backgrounds'])
+        && data.hero is map
+        && data.about is map
+        && data.roster is map
+        && data.roster.players is list
+        && data.roster.players.size() <= 20;
     }
 
     // Site Config
     match /config/site {
       allow read: if true;
-      allow write: if isAdmin() || !exists(/databases/$(database)/documents/config/site);
+      allow create: if !exists(/databases/$(database)/documents/config/site) && isValidSiteConfig(incoming());
+      allow update: if isAdmin() && isValidSiteConfig(incoming());
+      allow delete: if false;
     }
 
-    // Admins collection (for storing the custom credentials if needed)
+    // Admins collection
     match /admins/{adminId} {
-      allow read, write: if isAdmin();
+      allow read, write: if isAdmin() && isValidId(adminId);
     }
 
     // Test connection

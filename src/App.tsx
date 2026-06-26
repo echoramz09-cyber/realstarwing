@@ -6,7 +6,7 @@
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "motion/react";
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Youtube, Instagram, MessageSquare, Menu, X, Linkedin, Twitter, Settings, Save, Trash2, Plus, LogIn, LogOut, ChevronDown, ChevronUp, Image as ImageIcon, Maximize, Minimize, ExternalLink, Rocket } from "lucide-react";
-import { db, auth, INITIAL_SITE_CONFIG, seedSiteConfig, testConnection, ADMIN_USERNAME, ADMIN_PASSWORD } from "./firebase";
+import { db, auth, INITIAL_SITE_CONFIG, seedSiteConfig, testConnection, ADMIN_USERNAME, ADMIN_PASSWORD, handleFirestoreError, OperationType } from "./firebase";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, signInAnonymously } from "firebase/auth";
 
@@ -49,7 +49,7 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-[#02040a] overflow-hidden"
+      className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-[#050505] overflow-hidden"
     >
       {/* Starfield Background - Highly Optimized */}
       <div className="absolute inset-0 pointer-events-none">
@@ -72,7 +72,7 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
               position: 'absolute',
               left: star.left,
               width: star.size,
-              backgroundColor: phase === 'warp' ? '#fff' : '#d4af37',
+              backgroundColor: phase === 'warp' ? '#fff' : '#00f2ff',
               borderRadius: '999px',
               willChange: 'transform',
               transform: 'translateZ(0)'
@@ -146,7 +146,7 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
                 repeat: Infinity,
                 ease: "linear"
               }}
-              className="w-4 bg-gradient-to-t from-transparent via-orange-600 to-gold rounded-full blur-sm"
+              className="w-4 bg-gradient-to-t from-transparent via-blue-600 to-gold rounded-full blur-sm"
             />
           </div>
           
@@ -178,9 +178,9 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
           className="mt-16 text-center relative z-20"
         >
           <motion.h3 
-            animate={phase === 'warp' ? { scale: [1, 1.02, 1], color: ["#d4af37", "#fff", "#d4af37"] } : { opacity: [0.7, 1, 0.7] }}
+            animate={phase === 'warp' ? { scale: [1, 1.02, 1], color: ["#00f2ff", "#fff", "#00f2ff"] } : { opacity: [0.7, 1, 0.7] }}
             transition={{ duration: 0.8, repeat: Infinity }}
-            className="text-3xl md:text-4xl font-bold text-gold uppercase tracking-[0.5em] mb-4 drop-shadow-[0_0_10px_rgba(212,175,55,0.4)]"
+            className="text-3xl md:text-4xl font-bold text-gold uppercase tracking-[0.5em] mb-4 drop-shadow-[0_0_10px_rgba(0,242,255,0.4)]"
           >
             {message || (phase === 'ignition' ? 'Ignition' : phase === 'warp' ? 'Warp Speed' : 'Blast Off')}
           </motion.h3>
@@ -194,7 +194,7 @@ function RocketLoading({ message, subMessage }: { message?: string, subMessage?:
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
               transition={{ duration: 3.2, ease: "linear" }}
-              className="h-full bg-gradient-to-r from-orange-500 to-gold shadow-[0_0_10px_#d4af37]"
+              className="h-full bg-gradient-to-r from-blue-500 to-gold shadow-[0_0_10px_#00f2ff]"
             />
           </div>
         </motion.div>
@@ -220,7 +220,7 @@ function PlayerCard({ player, index }: any) {
         initial={{ opacity: 0, x: isEven ? -50 : 50 }}
         whileInView={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: isEven ? -50 : 50 }}
-        whileHover={{ scale: 1.02, backgroundColor: "rgba(212, 175, 55, 0.08)" }}
+        whileHover={{ scale: 1.02, backgroundColor: "rgba(0, 242, 255, 0.08)" }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6 }}
         className={`flex items-center gap-4 p-4 rounded-xl bg-navy/80 border border-gold/10 max-w-md w-full ${isEven ? 'flex-row' : 'flex-row-reverse text-right'}`}
@@ -349,6 +349,7 @@ export default function App() {
     seedSiteConfig();
 
     // Listen for config changes
+    const configPath = "config/site";
     const unsubscribeConfig = onSnapshot(doc(db, "config", "site"), (doc) => {
       if (doc.exists()) {
         const data = doc.data() as any;
@@ -357,6 +358,8 @@ export default function App() {
         setSiteConfig(mergedConfig);
         setDraftConfig(mergedConfig);
       }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, configPath);
     });
 
     // Listen for auth state
@@ -415,8 +418,9 @@ export default function App() {
 
   const handleUpdateConfig = async (newConfig: any) => {
     setIsSaving(true);
+    const configPath = "config/site";
     try {
-      const configDoc = doc(db, "config", "site");
+      const configDoc = doc(db, configPath);
       // Use setDoc with merge: true to be safer and ensure fields are created if missing
       await setDoc(configDoc, newConfig, { merge: true });
       // Artificial delay to make the rocket animation feel meaningful
@@ -424,6 +428,7 @@ export default function App() {
     } catch (error) {
       console.error("Error updating config:", error);
       setLoginError("Failed to save changes. Check permissions.");
+      handleFirestoreError(error, OperationType.WRITE, configPath);
     } finally {
       setIsSaving(false);
     }
@@ -442,9 +447,36 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col text-white selection:bg-gold selection:text-navy overflow-y-auto overflow-x-hidden">
-      {/* Header */}
-      {/* Admin Panel Toggle (Bottom Right) */}
+    <div className="min-h-screen flex flex-col text-white selection:bg-gold selection:text-navy overflow-y-auto overflow-x-hidden relative bg-navy">
+      {/* Background Images Layer */}
+      {siteConfig.backgrounds?.visible && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+          {(siteConfig.backgrounds?.items || []).map((bg: any) => (
+            <div 
+              key={bg.id}
+              className="absolute inset-0 w-full h-full"
+              style={{ 
+                opacity: bg.opacity,
+                filter: `blur(${bg.blur || 0}px)`,
+              }}
+            >
+              <motion.img 
+                src={bg.url} 
+                alt="Background" 
+                className="w-full h-full object-cover"
+                style={{ 
+                  scale: smoothScale,
+                }}
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Header */}
+        {/* Admin Panel Toggle (Bottom Right) */}
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -458,7 +490,7 @@ export default function App() {
             setShowLoginModal(true);
           }
         }}
-        className="fixed bottom-6 right-6 z-[100] w-12 h-12 bg-gold text-navy rounded-full shadow-lg flex items-center justify-center"
+        className="fixed bottom-6 right-6 z-[100] w-12 h-12 bg-gold text-navy rounded-full shadow-lg shadow-gold/40 flex items-center justify-center"
       >
         {isAdmin && showAdminPanel ? <X size={24} /> : <Settings size={24} />}
       </motion.button>
@@ -780,6 +812,89 @@ export default function App() {
                         + Add Player
                       </button>
                     </div>
+                  </div>
+                </section>
+
+                {/* Background Settings Section */}
+                <section className="space-y-6 bg-gold/5 p-6 rounded-2xl border border-gold/10 md:col-span-2">
+                  <div className="flex items-center justify-between border-b border-gold/10 pb-2">
+                    <h3 className="text-lg font-bold uppercase tracking-widest flex items-center gap-2">
+                      <div className="w-2 h-2 bg-gold rounded-full" /> Background Settings
+                    </h3>
+                    <input 
+                      type="checkbox" 
+                      checked={draftConfig.backgrounds?.visible ?? true} 
+                      onChange={(e) => setDraftConfig({ ...draftConfig, backgrounds: { ...(draftConfig.backgrounds || INITIAL_SITE_CONFIG.backgrounds), visible: e.target.checked } })}
+                      className="accent-gold w-5 h-5"
+                    />
+                  </div>
+                  <div className="space-y-6">
+                    {(draftConfig.backgrounds?.items || []).map((bg, idx) => (
+                      <div key={bg.id} className="p-6 bg-navy/50 rounded-xl border border-gold/10 space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-[10px] uppercase tracking-widest text-gold/40">Background Image URL</label>
+                          <input 
+                            type="text" 
+                            value={bg.url} 
+                            placeholder="Enter Unsplash or direct image URL"
+                            onChange={(e) => {
+                              const newItems = [...draftConfig.backgrounds.items];
+                              newItems[idx] = { ...bg, url: e.target.value };
+                              setDraftConfig({ ...draftConfig, backgrounds: { ...draftConfig.backgrounds, items: newItems } });
+                            }}
+                            className="w-full bg-navy border border-gold/10 rounded p-3 text-sm focus:outline-none focus:border-gold/40"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gold/40">Opacity ({bg.opacity})</label>
+                            <input 
+                              type="range" 
+                              min="0" 
+                              max="1" 
+                              step="0.05"
+                              value={bg.opacity} 
+                              onChange={(e) => {
+                                const newItems = [...draftConfig.backgrounds.items];
+                                newItems[idx] = { ...bg, opacity: parseFloat(e.target.value) };
+                                setDraftConfig({ ...draftConfig, backgrounds: { ...draftConfig.backgrounds, items: newItems } });
+                              }}
+                              className="w-full accent-gold"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-gold/40">Blur ({bg.blur || 0}px)</label>
+                            <input 
+                              type="range" 
+                              min="0" 
+                              max="20" 
+                              step="1"
+                              value={bg.blur || 0} 
+                              onChange={(e) => {
+                                const newItems = [...draftConfig.backgrounds.items];
+                                newItems[idx] = { ...bg, blur: parseInt(e.target.value) };
+                                setDraftConfig({ ...draftConfig, backgrounds: { ...draftConfig.backgrounds, items: newItems } });
+                              }}
+                              className="w-full accent-gold"
+                            />
+                          </div>
+                        </div>
+                        {bg.url && (
+                          <div className="mt-4 rounded-lg overflow-hidden border border-gold/20 h-32 relative">
+                            <img 
+                              src={bg.url} 
+                              alt="Background Preview" 
+                              className="w-full h-full object-cover"
+                              style={{ opacity: bg.opacity, filter: `blur(${bg.blur || 0}px)` }}
+                              referrerPolicy="no-referrer"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <span className="text-[10px] uppercase tracking-widest bg-navy/80 px-3 py-1 rounded-full border border-gold/20 text-gold/60">Live Preview</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </section>
 
@@ -1376,7 +1491,7 @@ export default function App() {
                 {loginError && <p className="text-red-500 text-xs text-center font-bold uppercase tracking-widest">{loginError}</p>}
                 <button 
                   type="submit"
-                  className="w-full py-4 bg-gold text-navy font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-white transition-colors"
+                  className="w-full py-4 bg-gold text-navy font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-white transition-all shadow-lg shadow-gold/20 hover:shadow-gold/40"
                 >
                   Access Panel
                 </button>
@@ -1425,7 +1540,7 @@ export default function App() {
                   item === "Socials" ? "#socials" :
                   "#"
                 }
-                whileHover={{ scale: 1.1, color: "#d4af37" }}
+                whileHover={{ scale: 1.1, color: "#00f2ff" }}
                 whileTap={{ scale: 0.95 }}
                 className="transition-colors"
               >
@@ -1523,7 +1638,7 @@ export default function App() {
                   <div className="absolute -inset-4 border border-gold/10 rounded-full" />
                   
                   {/* Inner glow */}
-                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(212,175,55,0.1)]" />
+                  <div className="absolute inset-0 rounded-full shadow-[inset_0_0_50px_rgba(0,242,255,0.1)]" />
                 </>
               )}
             </motion.div>
@@ -1535,7 +1650,7 @@ export default function App() {
               transition={{ duration: 0.8, delay: 0.5 }}
               className="text-center"
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-gold tracking-tight mb-2 uppercase">
+              <h1 className="text-4xl md:text-6xl font-bold text-gold tracking-tight mb-2 uppercase drop-shadow-[0_0_15px_rgba(0,242,255,0.4)]">
                 {siteConfig.hero.title}
               </h1>
               <p className="text-gold/80 text-lg md:text-xl font-bold tracking-[0.2em] uppercase">
@@ -1563,7 +1678,7 @@ export default function App() {
 
         {/* About Us Section */}
         {siteConfig.about.visible && (
-          <section id="about" className="py-16 px-4 relative bg-gold/[0.02]">
+          <section id="about" className="py-16 px-4 relative">
             <div className="max-w-4xl mx-auto text-center">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -1573,7 +1688,7 @@ export default function App() {
                 transition={{ duration: 0.8 }}
                 style={{ scale: siteConfig.about.scale || 1 }}
               >
-                <h2 className="text-3xl md:text-5xl font-bold text-gold tracking-widest uppercase mb-8">
+                <h2 className="text-3xl md:text-5xl font-bold text-gold tracking-widest uppercase mb-8 drop-shadow-[0_0_10px_rgba(0,242,255,0.3)]">
                   {siteConfig.about.title}
                 </h2>
                 <div className="space-y-6 text-gold/80 text-lg md:text-xl leading-relaxed font-medium whitespace-pre-wrap">
@@ -1595,7 +1710,7 @@ export default function App() {
                 transition={{ duration: 0.8 }}
                 className="w-full flex flex-col items-center"
               >
-                <h2 className="text-3xl md:text-5xl font-bold text-gold tracking-widest uppercase mb-12">
+                <h2 className="text-3xl md:text-5xl font-bold text-gold tracking-widest uppercase mb-12 drop-shadow-[0_0_10px_rgba(0,242,255,0.3)]">
                   {siteConfig.roster.title}
                 </h2>
                 
@@ -1753,7 +1868,7 @@ export default function App() {
 
         {/* Socials Section */}
         {siteConfig.socials.visible && (
-          <section id="socials" className="py-12 px-4 relative bg-gold/[0.02]">
+          <section id="socials" className="py-12 px-4 relative">
             <div className="max-w-4xl mx-auto flex flex-col items-center">
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
@@ -1807,32 +1922,6 @@ export default function App() {
           </section>
         )}
 
-        {/* Background Images Layer */}
-        {siteConfig.backgrounds?.visible && (
-          <div className="fixed inset-0 pointer-events-none overflow-hidden -z-20">
-            {(siteConfig.backgrounds?.items || []).map((bg: any) => (
-              <div 
-                key={bg.id}
-                className="absolute inset-0 w-full h-full"
-                style={{ 
-                  opacity: bg.opacity,
-                  filter: `blur(${bg.blur || 0}px)`,
-                }}
-              >
-                <motion.img 
-                  src={bg.url} 
-                  alt="Background" 
-                  className="w-full h-full object-cover"
-                  style={{ 
-                    scale: smoothScale,
-                  }}
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* Decorative background elements - Enhanced Light Leaks */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         </div>
@@ -1861,6 +1950,7 @@ export default function App() {
           </div>
         </motion.footer>
       )}
+      </div>
     </div>
   );
 }
